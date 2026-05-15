@@ -1,25 +1,36 @@
 import cv2
-import matplotlib.pyplot as plt
+import os
 
-img1 = cv2.imread('images/left.jpg')
-img2 = cv2.imread('images/right.jpg')
+class PanoramaStitcher:
+    def __init__(self):
+        self.sift = cv2.SIFT_create()
+        index_params = dict(algorithm=1, trees=5)
+        search_params = dict(checks=50)
+        self.flann = cv2.FlannBasedMatcher(index_params, search_params)
 
-if img1 is None or img2 is None:
-  print("Images not found:")
-else:
-  img1_rgb = cv2.cvtColor(img1,cv2.COLOR_BGR2RGB)
-  img2_rgb = cv2.cvtColor(img2,cv2.COLOR_BGR2RGB)
+    def get_features(self, image):
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        return self.sift.detectAndCompute(gray, None)
 
-plt.figure(figsize=(10, 5))
+def main():
+    image_folder = "images"
+    valid_formats = ('.jpg', '.jpeg', '.png', '.bmp')
 
-plt.subplot(1, 2, 1)
-plt.imshow(img1_rgb)
-plt.title('Left Image')
-plt.axis('off')
+    image_files = sorted([
+        f for f in os.listdir(image_folder)
+        if f.lower().endswith(valid_formats)
+    ])
 
-plt.subplot(1, 2, 2)
-plt.imshow(img2_rgb)
-plt.title('Right Image')
-plt.axis('off')
+    imgs = []
+    for f in image_files:
+        full_path = os.path.join(image_folder, f)
+        img = cv2.imread(full_path)
+        if img is not None:
+            imgs.append(img)
 
-plt.show()
+    stitcher = PanoramaStitcher()
+    final_result = stitcher.stitch_multiple(imgs)
+    cv2.imwrite("final_panorama_result.jpg", final_result)
+
+if __name__ == "__main__":
+    main()
