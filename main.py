@@ -73,7 +73,7 @@ class PanoramaStitcher:
         return panorama
 
 def main():
-    image_folder = "images2"
+    image_folder = "images4"
     valid_formats = ('.jpg', '.jpeg', '.png', '.bmp', '.svg')
 
     if not os.path.exists(image_folder):
