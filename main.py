@@ -22,7 +22,7 @@ class PanoramaStitcher:
         if contours:
             c = max(contours, key=cv2.contourArea)
             x, y, w, h = cv2.boundingRect(c)
-            return image[y:y + h, x:x + w]
+            return image[y:y + h, x:x + w - 3]
         return image
 
     def stitch_pair(self, base_img, next_img):
@@ -73,7 +73,7 @@ class PanoramaStitcher:
         return panorama
 
 def main():
-    image_folder = "images4"
+    image_folder = "images"
     valid_formats = ('.jpg', '.jpeg', '.png', '.bmp', '.svg')
 
     if not os.path.exists(image_folder):
